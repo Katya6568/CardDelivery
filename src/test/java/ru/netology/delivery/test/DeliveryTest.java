@@ -13,7 +13,7 @@ import ru.netology.delivery.data.DataGenerator;
 
 import javax.xml.crypto.Data;
 import java.time.Duration;
-import java.util.Locale;
+
 
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
@@ -159,8 +159,8 @@ class DeliveryTest {
         $("[data-test-id= 'agreement']").click();
         $$("[type= 'button']").find(Condition.text("Запланировать")).click();
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно запланирована на " + firstMeetingDate), Duration.ofSeconds(15))
-                .shouldBe(Condition.visible);
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Встреча успешно запланирована на " + firstMeetingDate), Duration.ofSeconds(15));
         $$("[type= 'button']").filter(Condition.visible).first().click();
         $("[data-test-id= 'date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         $("[data-test-id= 'date'] input").setValue(firstMeetingDate);
@@ -197,7 +197,7 @@ class DeliveryTest {
         $("[data-test-id= 'date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         $("[data-test-id= 'date'] input").setValue(DataGenerator.generateDate(5));
         $("[data-test-id= 'name'] input").setValue("Пётр Иванов");
-        $("[data-test-id= 'phone'] input").setValue("+79512567891");
+        $("[data-test-id= 'phone'] input").setValue(validUser.getPhone());
         $("[data-test-id= 'agreement']").click();
         $$("[type= 'button']").find(Condition.text("Запланировать")).click();
         $(".notification__content")
