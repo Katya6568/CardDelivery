@@ -1,29 +1,31 @@
 package ru.netology.delivery.test;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.Faker;
-import net.bytebuddy.asm.Advice;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Keys;
 import ru.netology.delivery.data.DataGenerator;
 
-import javax.xml.crypto.Data;
 import java.time.Duration;
 
-
-import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
 
 class DeliveryTest {
-
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
     @BeforeEach
     void setup() {
         open("http://localhost:9999");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
     }
 
     @Test
@@ -34,7 +36,7 @@ class DeliveryTest {
         var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
         var daysToAddForSecondMeeting = 7;
         var secondMeetingDate = DataGenerator.generateDate(daysToAddForSecondMeeting);
-        // TODO: добавить логику теста в рамках которого будет выполнено планирование и перепланирование встречи.
+
         // Для заполнения полей формы можно использовать пользователя validUser и строки с датами в переменных
         // firstMeetingDate и secondMeetingDate. Можно также вызывать методы generateCity(locale),
         // generateName(locale), generatePhone(locale) для генерации и получения в тесте соответственно города,
@@ -140,9 +142,7 @@ class DeliveryTest {
         $("[data-test-id= 'replan-notification']")
                 .shouldBe(Condition.hidden)
                 .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?"), Duration.ofSeconds(20));
-
     }
-
     @Test
     @DisplayName("Should not replan if same date")
     void shouldNotReplanIfSameDate() {
@@ -168,9 +168,7 @@ class DeliveryTest {
         $("[data-test-id= 'replan-notification']")
                 .shouldBe(Condition.hidden)
                 .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?"), Duration.ofSeconds(20));
-
     }
-
     @Test
     @DisplayName("Should not accept name of hyphens")
     void shouldNotAcceptNameOfHyphens() {
@@ -187,7 +185,6 @@ class DeliveryTest {
                 .shouldBe(Condition.visible)
                 .shouldHave(Condition.text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
-
     @Test
     @DisplayName("Should accept name of Cyrillic")
     void shouldAcceptNameOfCyrillic() {
@@ -204,5 +201,4 @@ class DeliveryTest {
                 .shouldBe(Condition.visible)
                 .shouldHave(Condition.text("Встреча успешно запланирована на " + DataGenerator.generateDate(5)), Duration.ofSeconds(15));
     }
-
 }
